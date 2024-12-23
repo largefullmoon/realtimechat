@@ -11,13 +11,16 @@ const Message = () => {
     const [selectedUser, setSelectedUser] = useState(users[0]);
     const getUsersWithLastMessage = async () => {
         const userId = localStorage.getItem('userId');
-        const response = await axios.get("http://localhost:8080/api/users?myId="+userId, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?myId=${userId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
         });
         setUsers(response.data); // Set the filename from the response
     }
+    useEffect(()=>{
+        setSelectedUser(users[0])
+    },[users])
     useEffect(() => {
         getUsersWithLastMessage()
     }, [])
@@ -153,6 +156,7 @@ const Message = () => {
                 </div>
             </main >
         </div >);
+
 };
 
 export default Message;

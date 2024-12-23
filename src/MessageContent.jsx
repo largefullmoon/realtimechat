@@ -35,7 +35,7 @@ const MessageContent = ({ selectedUser, from }) => {
                     fileName
                 };
                 try {
-                    const response = await axios.post('http://localhost:8080/api/messages', messageDto, {
+                    const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages`, messageDto, {
                         headers: {
                             'Content-Type': 'application/json',
                         },
@@ -60,7 +60,7 @@ const MessageContent = ({ selectedUser, from }) => {
                 time,
             };
             try {
-                const response = await axios.post('http://localhost:8080/api/messages', messageDto, {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages`, messageDto, {
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -79,7 +79,7 @@ const MessageContent = ({ selectedUser, from }) => {
         scrollToBottom()
     }, [messageList])
     const getMessages = async () => {
-        const response = await axios.get(`http://localhost:8080/api/messages?senderId=${localStorage.getItem("userId")}&receiverId=${selectedUser.userId}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/messages?senderId=${localStorage.getItem("userId")}&receiverId=${selectedUser.userId}`, {
             headers: {
                 "Content-Type": "application/json",
             },
@@ -92,7 +92,7 @@ const MessageContent = ({ selectedUser, from }) => {
         try {
             if (client == null) {
                 client.current = new Client({
-                    webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+                    webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`),
                     debug: function (str) {
                         console.log('STOMP: ' + str);
                     },
@@ -174,7 +174,7 @@ const MessageContent = ({ selectedUser, from }) => {
         const formData = new FormData();
         formData.append("file", file);
         try {
-            const response = await axios.post('http://localhost:8080/api/upload', formData, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -190,7 +190,6 @@ const MessageContent = ({ selectedUser, from }) => {
             alert("Failed to upload file");
         }
     };
-    ``
     const handleUpload = () => {
         if (selectedFiles.image) {
             const filePath = uploadFile(selectedFiles.image);
@@ -279,7 +278,7 @@ const MessageContent = ({ selectedUser, from }) => {
                                                     <div className="relative" style={{ paddingBottom: '57.4286%' }}>
                                                         <div className="absolute inset-0 w-full h-full">
                                                             <img
-                                                                src={`http://localhost:8080/api/files/${message.filename}`}
+                                                                src={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
                                                                 alt={message.filename}
                                                                 className="block object-cover w-full h-full max-w-full max-h-52"
                                                             />
@@ -291,7 +290,7 @@ const MessageContent = ({ selectedUser, from }) => {
                                         ) : (
                                             <div>
                                                 <a
-                                                    href={`http://localhost:8080/api/files/${message.filename}`}
+                                                    href={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
                                                     download
                                                     target='_blank'
                                                     className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
@@ -320,7 +319,7 @@ const MessageContent = ({ selectedUser, from }) => {
                                                     <div className="relative" style={{ paddingBottom: '57.4286%' }}>
                                                         <div className="absolute inset-0 w-full h-full">
                                                             <img
-                                                                src={`http://localhost:8080/api/files/${message.filename}`}
+                                                                src={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
                                                                 alt={message.filename}
                                                                 className="block object-cover w-full h-full max-w-full max-h-52"
                                                             />
@@ -332,7 +331,7 @@ const MessageContent = ({ selectedUser, from }) => {
                                         ) : (
                                             <div>
                                                 <a
-                                                    href={`http://localhost:8080/api/files/${message.filename}`}
+                                                    href={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
                                                     download
                                                     target='_blank'
                                                     className="flex items-center gap-2 text-blue-600 hover:text-blue-800"

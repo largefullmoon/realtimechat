@@ -11,7 +11,7 @@ const UserListModal = ({ }) => {
     useEffect(() => {
         // Fetch users from your API
         const fetchUsers = async () => {
-            const response = await axios.get("http://localhost:8080/api/users?myId="+localStorage.getItem("userId"), {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?myId=${localStorage.getItem("userId")}`, {
                 headers: {
                     "Content-Type": "application/json",
                 },

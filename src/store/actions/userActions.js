@@ -23,22 +23,3 @@ export const setUser = (user) => ({
     type: USER_ACTIONS.SET_USER,
     payload: user
 });
-
-// Thunk action creator for login
-export const loginUser = (credentials) => async (dispatch) => {
-    dispatch(loginStart());
-    try {
-        const response = await axios.post('http://localhost:8080/api/auth/login', credentials);
-        const user = response.data;
-        localStorage.setItem('user', JSON.stringify(user));
-        dispatch(loginSuccess(user));
-    } catch (error) {
-        dispatch(loginFailure(error.message));
-    }
-};
-
-// Thunk action creator for logout
-export const logoutUser = () => (dispatch) => {
-    localStorage.removeItem('user');
-    dispatch(logout());
-};
