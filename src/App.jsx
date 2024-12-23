@@ -24,7 +24,6 @@ function App() {
         <ToastContainer />
         <Routes>
           <Route path="/" element={<Layout />} >
-            <Route path="/" element={<SignIn />} />
             <Route path="/message" element={<Message />} />
             <Route path="*" element={<NotFound />} />
           </Route>
