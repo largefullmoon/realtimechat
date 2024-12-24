@@ -234,7 +234,7 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
                         <div className="absolute bottom-0 right-0 w-2 h-2 m-px bg-teal-500 rounded-full"></div>
                     </div>
                     <div className="cursor-pointer" uk-toggle="target: .rightt ; cls: hidden">
-                        <div className="text-base font-bold">{selectedUser.name}</div>
+                        <div className="text-base font-bold">{selectedUser.username}</div>
                         <div className="text-xs font-semibold text-green-500"> Online</div>
                     </div>
                 </div>
