@@ -3,13 +3,13 @@ import './css/style.css';
 import axios from "axios";
 import MessageContent from './MessageContent'
 import { formatRelativeTime } from './utils/timeUtils';
+
 const Message = () => {
-    const [users, setUsers] = useState([
-        { userId: 1, username: 'Jesse Steeve', photo: "", messageTime: "09:40 AM", lastMessage: "Love your photos" },
-        { userId: 2, username: 'Martin Gray', photo: "", messageTime: "10:34 AM", lastMessage: "Phtoto editor needed, Fix photos?" },
-        { userId: 3, username: 'Monroe Parker', photo: "", messageTime: "06:12 AM", lastMessage: "Love your photos" }
-    ]);
-    const [selectedUser, setSelectedUser] = useState(users[0]);
+    const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedUser, setSelectedUser] = useState(null);
+
     const getUsersWithLastMessage = async () => {
         const userId = localStorage.getItem('userId');
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?myId=${userId}`, {
@@ -19,12 +19,31 @@ const Message = () => {
         });
         setUsers(response.data); // Set the filename from the response
     }
+
+    const handleUserSearch = (event) => {
+        const term = event.target.value.toLowerCase();
+        setSearchTerm(term);
+
+        // Filter users based on username or last message
+        const filtered = users.filter(user => 
+            user.username.toLowerCase().includes(term) || 
+            (user.lastMessage && user.lastMessage.toLowerCase().includes(term))
+        );
+
+        setFilteredUsers(filtered);
+    };
+
+    // Use filteredUsers when search term is not empty, otherwise use original users list
+    const displayUsers = searchTerm ? filteredUsers : users;
+
     useEffect(()=>{
         setSelectedUser(users[0])
     },[users])
+
     useEffect(() => {
         getUsersWithLastMessage()
     }, [])
+
     return (
         <div className=''>
             {/* <!-- main contents --> */}
@@ -77,7 +96,13 @@ const Message = () => {
                                     {/* <!-- search --> */}
                                     <div className="relative mt-4">
                                         <div className="absolute flex translate-y-1/2 left-3 bottom-1/2"><ion-icon name="search" className="text-xl"></ion-icon></div>
-                                        <input type="text" placeholder="Search" className="w-full !pl-10 !py-2 !rounded-lg" />
+                                        <input 
+                                            type="text" 
+                                            placeholder="Search users" 
+                                            value={searchTerm}
+                                            onChange={handleUserSearch}
+                                            className="w-full !pl-10 !py-2 !rounded-lg" 
+                                        />
                                     </div>
 
                                 </div>
@@ -85,12 +110,21 @@ const Message = () => {
 
                                 {/* <!-- users list --> */}
                                 <div className="space-y-2 p-2 overflow-y-auto md:h-[calc(100vh-139px)] h-[calc(100vh-130px)]">
-                                    {users.map((user, index) => (
-                                        <a key={user.userId} href="#" className="relative flex items-center gap-4 p-2 duration-200 rounded-xl hover:bg-secondery" onClick={() => {
-                                            setSelectedUser(user);
-                                        }}>
+                                    {displayUsers.map((user, index) => (
+                                        <a 
+                                            key={user.userId} 
+                                            href="#" 
+                                            className="relative flex items-center gap-4 p-2 duration-200 rounded-xl hover:bg-secondery" 
+                                            onClick={() => {
+                                                setSelectedUser(user);
+                                            }}
+                                        >
                                             <div className="relative w-14 h-14 shrink-0">
-                                                <img src={`/src/assets/images/avatars/avatar-${user.userId}.jpg`} alt="" className="object-cover w-full h-full rounded-full" />
+                                                <img 
+                                                    src={`/src/assets/images/avatars/avatar-${user.userId}.jpg`} 
+                                                    alt="" 
+                                                    className="object-cover w-full h-full rounded-full" 
+                                                />
                                                 <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border border-white rounded-full dark:border-slate-800"></div>
                                             </div>
                                             <div className="flex-1 min-w-0">
@@ -103,6 +137,13 @@ const Message = () => {
                                             </div>
                                         </a>
                                     ))}
+                                    
+                                    {/* Show message when no users match search */}
+                                    {displayUsers.length === 0 && searchTerm && (
+                                        <div className="text-center text-gray-500 py-4">
+                                            No users found matching "{searchTerm}"
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                             {/* <!-- overly --> */}
@@ -120,8 +161,7 @@ const Message = () => {
                                 <div className="py-10 pt-20 text-sm text-center">
                                     <img src="/src/assets/images/avatars/avatar-3.jpg" className="w-24 h-24 mx-auto mb-3 rounded-full" alt="" />
                                     <div className="mt-8">
-                                        <div className="text-base font-medium text-black md:text-xl dark:text-white"> Monroe Parker  </div>
-                                        <div className="mt-1 text-sm text-gray-500 dark:text-white/80">@Monroepark</div>
+                                        <div className="text-base font-medium text-black md:text-xl dark:text-white">{selectedUser && selectedUser.username}</div>
                                     </div>
                                     <div className="mt-5">
                                         <a href="timeline.html" className="inline-block rounded-full px-4 py-1.5 text-sm font-semibold bg-secondery">View profile</a>
@@ -156,8 +196,8 @@ const Message = () => {
                     </div>
                 </div>
             </main >
-        </div >);
-
+        </div >
+    );
 };
 
 export default Message;

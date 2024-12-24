@@ -25,6 +25,19 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
         images: [],
         document: null,
     });
+    const messageRead = async (messageId) => {
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/read/${messageId}`, null, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            console.log(response.data, "response")
+        } catch (error) {
+            console.error("Failed to send message:", error);
+            alert("Failed to send message");
+        }
+    }
     const sendMessage = async () => {
         // Use ISO string with millisecond precision
         const time = new Date().toISOString();
@@ -270,6 +283,7 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
                     {messageList.map((message, index) => {
                         if (message.filename != null && message.filename != "" && (message.type == "received" || message.receiverId == localStorage.getItem("userId"))) {
                             const isImage = message.filename.match(/\.(jpg|jpeg|png|gif)$/i);
+                            messageRead(message.id)
                             return (
                                 <div key={index}>
                                     <div className="flex items-end gap-2">
@@ -357,6 +371,7 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
                             );
                         }
                         if (message.type == "received" || message.receiverId == localStorage.getItem("userId")) {
+                            messageRead(message.id)
                             return (
                                 <div key={index}>
                                     <div className="flex gap-3">
