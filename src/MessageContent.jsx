@@ -267,7 +267,7 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
                     <div className="py-10 text-sm text-center lg:pt-8">
                         <img src="/src/assets/images/avatars/avatar-6.jpg" className="w-24 h-24 mx-auto mb-3 rounded-full" alt="" />
                         <div className="mt-8">
-                            <div className="text-base font-medium text-black md:text-xl dark:text-white">{selectedUser.name}</div>
+                            <div className="text-base font-medium text-black md:text-xl dark:text-white">{selectedUser && selectedUser.username}</div>
                         </div>
                         <div className="mt-3.5">
                             <a href="timeline.html" className="inline-block rounded-lg px-4 py-1.5 text-sm font-semibold bg-secondery">View profile</a>
