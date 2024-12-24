@@ -131,7 +131,7 @@ const Message = () => {
                                                 <div className="flex items-center gap-2 mb-1.5">
                                                     <div className="mr-auto text-sm font-medium text-black dark:text-white">{user.username}</div>
                                                     <div className="text-xs font-light text-gray-500 dark:text-white/70">{formatRelativeTime(user.messageTime)}</div>
-                                                    {!user.isRead && <div className="w-2.5 h-2.5 bg-blue-600 rounded-full dark:bg-slate-700"></div>}
+                                                    {/* {!user.isRead && <div className="w-2.5 h-2.5 bg-blue-600 rounded-full dark:bg-slate-700"></div>} */}
                                                 </div>
                                                 <div className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap">{user.lastMessage}</div>
                                             </div>
