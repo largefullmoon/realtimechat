@@ -67,11 +67,13 @@ const ChatWindow = ({ senderId, receiverId, position }) => {
                 <MessageContent 
                     selectedUser={{ id: receiverId }}
                     from={true}
+                    getUsersWithLastMessage={() => {
+                        console.log("getUsersWithLastMessage")
+                    }}
                     style={{
                         height: '100%',
                         overflow: 'auto'
                     }}
-                    getUsersWithLastMessage={() => {}}
                 />
             </div>
         </div>

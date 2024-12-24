@@ -18,7 +18,7 @@ const CollapsibleWindow = ({ senderId, receiverId, position, isCollapsed, receiv
         <div className="chat-window" style={{
             position: 'fixed',
             bottom: '0',
-            right: `${(position + 1) * 300}px`,
+            right: `${(position + 1) * 300 + 20}px`,
             width: '300px',
             height: isCollapsed ? '40px' : '500px',
             backgroundColor: 'white',
@@ -69,6 +69,9 @@ const CollapsibleWindow = ({ senderId, receiverId, position, isCollapsed, receiv
                     <MessageContent
                         selectedUser={{ id: receiverId }}
                         from={true}
+                        getUsersWithLastMessage={() => {
+                            console.log("getUsersWithLastMessage")
+                        }}
                         style={{
                             height: '100%',
                             overflow: 'auto'

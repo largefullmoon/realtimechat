@@ -5,22 +5,22 @@ import axios from 'axios';
 
 const UserListModal = ({ }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState([{userId: 1, username: "user1"}]);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        // Fetch users from your API
-        const fetchUsers = async () => {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?myId=${localStorage.getItem("userId")}`, {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            setUsers(response.data); // Set the filename from the response
-        };
+    // useEffect(() => {
+    //     // Fetch users from your API
+    //     const fetchUsers = async () => {
+    //         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/users?myId=${localStorage.getItem("userId")}`, {
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //         });
+    //         setUsers(response.data); // Set the filename from the response
+    //     };
 
-        fetchUsers();
-    }, []);
+    //     fetchUsers();
+    // }, []);
 
     const handleUserClick = (receiverId) => {
         dispatch(addWindow({ senderId: 1, receiverId, receivedUser: users.filter(user => user.userId === receiverId)[0] }));
