@@ -1,11 +1,32 @@
-export const formatRelativeTime = (timestamp) => {
+// Utility to adjust timestamp based on timezone difference
+export const adjustTimestamp = (timestamp, hourDifference = 0) => {
+    const date = new Date(timestamp);
+    // Adjust the time by adding or subtracting hours
+    date.setHours(date.getHours() + hourDifference);
+    return date.toISOString();
+};
+
+// Function to get the timezone offset
+export const getTimezoneOffset = () => {
+    // Get the difference between local time and UTC in hours
+    // Note: getTimezoneOffset() returns minutes, so we convert to hours
+    // The sign is reversed because getTimezoneOffset() returns negative for positive offsets
+    return -new Date().getTimezoneOffset() / 60;
+};
+
+export const formatRelativeTime = (timestamp, serverTimezoneOffset = null) => {
     if(timestamp === null) {
         return '';
     }
     
+    // If no server timezone offset is provided, calculate it
+    const timezoneOffset = serverTimezoneOffset ?? getTimezoneOffset();
+    
+    // Adjust the timestamp based on server timezone offset
+    const adjustedTimestamp = adjustTimestamp(timestamp, -timezoneOffset);
+    
     // Ensure the timestamp is parsed as a Date object
-    // Use Date.parse to handle ISO 8601 format consistently
-    const past = new Date(timestamp);
+    const past = new Date(adjustedTimestamp);
     const now = new Date();
 
     // Convert both to UTC to remove timezone differences
