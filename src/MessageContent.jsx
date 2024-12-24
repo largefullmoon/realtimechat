@@ -26,7 +26,9 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
         document: null,
     });
     const sendMessage = async () => {
-        const time = new Date().toISOString()
+        // Use ISO string with millisecond precision
+        const time = new Date().toISOString();
+        console.log('Sending message at:', time);
         if (selectedFiles.image || selectedFiles.images.length > 0 || selectedFiles.document) {
             const fileName = await handleUpload()
             if (fileName) {
