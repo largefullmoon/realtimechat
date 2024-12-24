@@ -1,28 +1,12 @@
 export const formatRelativeTime = (timestamp) => {
-    // Ensure the timestamp is converted to a Date object in UTC
+    if(timestamp === null) {
+        return '';
+    }
+    // Use local times directly
     const now = new Date();
     const past = new Date(timestamp);
     
-    // Convert both to UTC to remove timezone differences
-    const nowUtc = Date.UTC(
-        now.getUTCFullYear(), 
-        now.getUTCMonth(), 
-        now.getUTCDate(), 
-        now.getUTCHours(), 
-        now.getUTCMinutes(), 
-        now.getUTCSeconds()
-    );
-    
-    const pastUtc = Date.UTC(
-        past.getUTCFullYear(), 
-        past.getUTCMonth(), 
-        past.getUTCDate(), 
-        past.getUTCHours(), 
-        past.getUTCMinutes(), 
-        past.getUTCSeconds()
-    );
-
-    const diffMs = nowUtc - pastUtc;
+    const diffMs = now - past;
     const diffSeconds = Math.floor(diffMs / 1000);
     const diffMinutes = Math.floor(diffSeconds / 60);
     const diffHours = Math.floor(diffMinutes / 60);

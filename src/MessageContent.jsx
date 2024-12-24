@@ -10,7 +10,7 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
     const client = useRef(null);
     const [message, setMessage] = useState("")
-    const [time, setTime] = useState(new Date().toISOString());
+    // const [time, setTime] = useState(new Date().toISOString());
     const messages = useRef([])
     const [messageList, setMessageList] = useState([]);
     const [emojis, setEmjis] = useState(["🤩", "😎", "🥳", "😂", "🥰", "😡", "😊", "🛠️", "🌄", "👩‍💼", "🤑", "😕", "😩", "🤔", "😅", "😬"]);
@@ -26,6 +26,7 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
         document: null,
     });
     const sendMessage = async () => {
+        const time = new Date().toISOString()
         if (selectedFiles.image || selectedFiles.images.length > 0 || selectedFiles.document) {
             const fileName = await handleUpload()
             if (fileName) {
