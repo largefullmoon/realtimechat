@@ -8,10 +8,10 @@ export const adjustTimestamp = (timestamp, hourDifference = 0) => {
 
 // Function to get the timezone offset
 export const getTimezoneOffset = () => {
-    // Get the difference between local time and UTC in hours
-    // Note: getTimezoneOffset() returns minutes, so we convert to hours
-    // The sign is reversed because getTimezoneOffset() returns negative for positive offsets
-    return -new Date().getTimezoneOffset() / 60;
+    // Get the timezone offset in hours
+    // getTimezoneOffset() returns minutes, with opposite sign
+    const offsetMinutes = new Date().getTimezoneOffset();
+    return -offsetMinutes / 60;
 };
 
 export const formatRelativeTime = (timestamp, serverTimezoneOffset = null) => {
@@ -20,10 +20,15 @@ export const formatRelativeTime = (timestamp, serverTimezoneOffset = null) => {
     }
     
     // If no server timezone offset is provided, calculate it
-    const timezoneOffset = serverTimezoneOffset ?? getTimezoneOffset();
+    const localTimezoneOffset = getTimezoneOffset();
+    const timezoneOffset = serverTimezoneOffset ?? 0; // Default to 0 if no server offset
+
+    // Calculate the total offset adjustment
+    // Subtract local timezone offset and add server timezone offset
+    const totalOffset = timezoneOffset - localTimezoneOffset;
     
-    // Adjust the timestamp based on server timezone offset
-    const adjustedTimestamp = adjustTimestamp(timestamp, -timezoneOffset);
+    // Adjust the timestamp based on the total offset
+    const adjustedTimestamp = adjustTimestamp(timestamp, -totalOffset);
     
     // Ensure the timestamp is parsed as a Date object
     const past = new Date(adjustedTimestamp);
