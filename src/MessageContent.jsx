@@ -26,17 +26,17 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
         document: null,
     });
     const messageRead = async (messageId) => {
-        try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/read/${messageId}`, null, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            console.log(response.data, "response")
-        } catch (error) {
-            console.error("Failed to send message:", error);
-            alert("Failed to send message");
-        }
+        // try {
+        //     const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/read/${messageId}`, null, {
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //     });
+        //     console.log(response.data, "response")
+        // } catch (error) {
+        //     console.error("Failed to send message:", error);
+        //     alert("Failed to send message");
+        // }
     }
     const sendMessage = async () => {
         // Use ISO string with millisecond precision
