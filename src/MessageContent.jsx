@@ -259,11 +259,11 @@ const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
                     </div>
                 }
                 <div className="space-y-6 text-sm font-medium">
-                    <div className="flex justify-center ">
+                    {/* <div className="flex justify-center ">
                         <div className="text-sm font-medium text-gray-500 dark:text-white/70">
                             April 8,2023,6:30 AM
                         </div>
-                    </div>
+                    </div> */}
                     {messageList.map((message, index) => {
                         if (message.filename != null && message.filename != "" && (message.type == "received" || message.receiverId == localStorage.getItem("userId"))) {
                             const isImage = message.filename.match(/\.(jpg|jpeg|png|gif)$/i);
