@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import './css/style.css';
 import axios from "axios";
 import MessageContent from './MessageContent'
+import { formatRelativeTime } from './utils/timeUtils';
 const Message = () => {
     const [users, setUsers] = useState([
         { userId: 1, username: 'Jesse Steeve', photo: "", messageTime: "09:40 AM", lastMessage: "Love your photos" },
@@ -95,7 +96,7 @@ const Message = () => {
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center gap-2 mb-1.5">
                                                     <div className="mr-auto text-sm font-medium text-black dark:text-white">{user.username}</div>
-                                                    <div className="text-xs font-light text-gray-500 dark:text-white/70">{user.messageTime}</div>
+                                                    <div className="text-xs font-light text-gray-500 dark:text-white/70">{formatRelativeTime(user.messageTime)}</div>
                                                     {!user.isRead && <div className="w-2.5 h-2.5 bg-blue-600 rounded-full dark:bg-slate-700"></div>}
                                                 </div>
                                                 <div className="overflow-hidden text-sm font-medium text-ellipsis whitespace-nowrap">{user.lastMessage}</div>
@@ -108,7 +109,7 @@ const Message = () => {
                             <div id="side-chat" className="fixed inset-0 z-40 w-full h-full bg-slate-100/40 backdrop-blur dark:bg-slate-800/40 max-md:-translate-x-full md:hidden" uk-toggle="target: #side-chat ; cls: max-md:-translate-x-full"></div>
                         </div>
                         {/* <!-- message center --> */}
-                        <MessageContent selectedUser={selectedUser} from={false}/>
+                        <MessageContent selectedUser={selectedUser} from={false} getUsersWithLastMessage={getUsersWithLastMessage}/>
 
                         {/* <!-- user profile right info --> */}
                         <div className="absolute top-0 right-0 z-10 hidden w-full h-full transition-transform rightt">

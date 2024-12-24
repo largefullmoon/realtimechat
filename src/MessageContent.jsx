@@ -2,7 +2,9 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Client } from '@stomp/stompjs';
 import axios from "axios";
 import SockJS from 'sockjs-client';
-const MessageContent = ({ selectedUser, from }) => {
+import { formatRelativeTime, convertToUTCISOString } from './utils/timeUtils';
+
+const MessageContent = ({ selectedUser, from, getUsersWithLastMessage }) => {
     const [newMessages, setNewMessages] = useState([]);
     const stompClient = useRef(null);
     const [connectionStatus, setConnectionStatus] = useState('Disconnected');
@@ -76,6 +78,7 @@ const MessageContent = ({ selectedUser, from }) => {
         }
     }
     useEffect(() => {
+        getUsersWithLastMessage()
         scrollToBottom()
     }, [messageList])
     const getMessages = async () => {
@@ -234,7 +237,7 @@ const MessageContent = ({ selectedUser, from }) => {
                     {!from &&
                         <button type="button" className="hover:bg-slate-100 p-1.5 rounded-full" uk-toggle="target: .rightt ; cls: hidden">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 01-1.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                             </svg>
                         </button>}
 
@@ -265,98 +268,110 @@ const MessageContent = ({ selectedUser, from }) => {
                         if (message.filename != null && message.filename != "" && (message.type == "received" || message.receiverId == localStorage.getItem("userId"))) {
                             const isImage = message.filename.match(/\.(jpg|jpeg|png|gif)$/i);
                             return (
-                                <div className="flex items-end gap-2" key={index}>
-                                    <img src="/src/assets/images/avatars/avatar-3.jpg" alt="" className="w-4 h-4 rounded-full shadow" />
-                                    <div className="block rounded-[18px] border overflow-hidden p-3">
-                                        {isImage ? (
-                                            <div className="max-w-md">
-                                                <div className="relative max-w-full w-72">
-                                                    <div className="relative" style={{ paddingBottom: '57.4286%' }}>
-                                                        <div className="absolute inset-0 w-full h-full">
-                                                            <img
-                                                                src={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
-                                                                alt={message.filename}
-                                                                className="block object-cover w-full h-full max-w-full max-h-52"
-                                                            />
+                                <div key={index}>
+                                    <div className="flex items-end gap-2">
+                                        <img src="/src/assets/images/avatars/avatar-3.jpg" alt="" className="w-4 h-4 rounded-full shadow" />
+                                        <div className="block rounded-[18px] border overflow-hidden p-3">
+                                            {isImage ? (
+                                                <div className="max-w-md">
+                                                    <div className="relative max-w-full w-72">
+                                                        <div className="relative" style={{ paddingBottom: '57.4286%' }}>
+                                                            <div className="absolute inset-0 w-full h-full">
+                                                                <img
+                                                                    src={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
+                                                                    alt={message.filename}
+                                                                    className="block object-cover w-full h-full max-w-full max-h-52"
+                                                                />
+                                                            </div>
                                                         </div>
+                                                        {message.message != "" && <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>}
                                                     </div>
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <a
+                                                        href={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
+                                                        download
+                                                        target='_blank'
+                                                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        {message.filename}
+                                                    </a>
                                                     {message.message != "" && <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>}
                                                 </div>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <a
-                                                    href={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
-                                                    download
-                                                    target='_blank'
-                                                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                    {message.filename}
-                                                </a>
-                                                {message.message != "" && <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>}
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
+                                    <div className="text-xs text-gray-500 ml-6 mt-1">{formatRelativeTime(message.time)}</div>
                                 </div>
                             );
                         }
                         if (message.filename != null && message.filename != "" && (message.type == "sent" || message.senderId == localStorage.getItem("userId"))) {
                             const isImage = message.filename.match(/\.(jpg|jpeg|png|gif)$/i);
                             return (
-                                <div className="flex flex-row-reverse items-end gap-2" key={index}>
-                                    <img src="/src/assets/images/avatars/avatar-3.jpg" alt="" className="w-4 h-4 rounded-full shadow" />
-                                    <div className="block rounded-[18px] border overflow-hidden p-3">
-                                        {isImage ? (
-                                            <div className="max-w-md">
-                                                <div className="relative max-w-full w-72">
-                                                    <div className="relative" style={{ paddingBottom: '57.4286%' }}>
-                                                        <div className="absolute inset-0 w-full h-full">
-                                                            <img
-                                                                src={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
-                                                                alt={message.filename}
-                                                                className="block object-cover w-full h-full max-w-full max-h-52"
-                                                            />
+                                <div key={index}>
+                                    <div className="flex flex-row-reverse items-end gap-2">
+                                        <img src="/src/assets/images/avatars/avatar-3.jpg" alt="" className="w-4 h-4 rounded-full shadow" />
+                                        <div className="block rounded-[18px] border overflow-hidden p-3">
+                                            {isImage ? (
+                                                <div className="max-w-md">
+                                                    <div className="relative max-w-full w-72">
+                                                        <div className="relative" style={{ paddingBottom: '57.4286%' }}>
+                                                            <div className="absolute inset-0 w-full h-full">
+                                                                <img
+                                                                    src={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
+                                                                    alt={message.filename}
+                                                                    className="block object-cover w-full h-full max-w-full max-h-52"
+                                                                />
+                                                            </div>
                                                         </div>
+                                                        {message.message != "" && <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>}
                                                     </div>
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <a
+                                                        href={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
+                                                        download
+                                                        target='_blank'
+                                                        className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                        </svg>
+                                                        {message.filename}
+                                                    </a>
                                                     {message.message != "" && <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>}
                                                 </div>
-                                            </div>
-                                        ) : (
-                                            <div>
-                                                <a
-                                                    href={`${import.meta.env.VITE_API_URL}/api/files/${message.filename}`}
-                                                    download
-                                                    target='_blank'
-                                                    className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                                    </svg>
-                                                    {message.filename}
-                                                </a>
-                                                {message.message != "" && <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>}
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
                                     </div>
+                                    <div className="text-xs text-gray-500 text-right mr-6 mt-1">{formatRelativeTime(message.time)}</div>
                                 </div>
                             );
                         }
                         if (message.type == "received" || message.receiverId == localStorage.getItem("userId")) {
                             return (
-                                <div className="flex gap-3" key={index}>
-                                    <img src="/src/assets/images/avatars/avatar-2.jpg" alt="" className="rounded-full shadow w-9 h-9" />
-                                    <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>
+                                <div key={index}>
+                                    <div className="flex gap-3">
+                                        <img src="/src/assets/images/avatars/avatar-2.jpg" alt="" className="rounded-full shadow w-9 h-9" />
+                                        <div className="px-4 py-2 rounded-[20px] max-w-sm bg-secondery">{message.message}</div>
+                                    </div>
+                                    <div className="text-xs text-gray-500 ml-12 mt-1">{formatRelativeTime(message.time)}</div>
                                 </div>
                             )
                         }
                         if (message.type == "sent" || message.senderId == localStorage.getItem("userId")) {
                             return (
-                                <div className="flex flex-row-reverse items-end gap-2" key={index}>
-                                    <img src="/src/assets/images/avatars/avatar-3.jpg" alt="" className="w-5 h-5 rounded-full shadow" />
-                                    <div className="px-4 py-2 rounded-[20px] max-w-sm bg-gradient-to-tr from-sky-500 to-blue-500 text-white shadow">{message.message}</div>
+                                <div key={index}>
+                                    <div className="flex flex-row-reverse items-end gap-2">
+                                        <img src="/src/assets/images/avatars/avatar-3.jpg" alt="" className="w-5 h-5 rounded-full shadow" />
+                                        <div className="px-4 py-2 rounded-[20px] max-w-sm bg-gradient-to-tr from-sky-500 to-blue-500 text-white shadow">{message.message}</div>
+                                    </div>
+                                    <div className="text-xs text-gray-500 text-right mr-6 mt-1">{formatRelativeTime(message.time)}</div>
                                 </div>
                             )
                         }

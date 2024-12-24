@@ -71,6 +71,7 @@ const ChatWindow = ({ senderId, receiverId, position }) => {
                         height: '100%',
                         overflow: 'auto'
                     }}
+                    getUsersWithLastMessage={() => {}}
                 />
             </div>
         </div>
