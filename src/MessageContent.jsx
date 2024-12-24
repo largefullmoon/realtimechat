@@ -90,51 +90,47 @@ const MessageContent = ({ selectedUser, from }) => {
     }
     useEffect(() => {
         try {
-            if (client == null) {
-                client.current = new Client({
-                    webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`),
-                    debug: function (str) {
-                        console.log('STOMP: ' + str);
-                    },
-                    reconnectDelay: 5000,
-                    heartbeatIncoming: 4000,
-                    heartbeatOutgoing: 4000,
-                });
-
-                client.current.onConnect = (frame) => {
-                    setConnectionStatus('Connected');
-                    // Subscribe to the messages topic
-                    client.current.subscribe('/topic/messages', (message) => {
-                        try {
-                            const receivedMessage = JSON.parse(message.body);
-                            // setNewMessages((prevMessages) => [...prevMessages, receivedMessage]);
-                            console.log(receivedMessage, "receivedMessage")
-                            if (receivedMessage.receiverId == localStorage.getItem("userId")) {
-                                messages.current = [...messages.current, { message: receivedMessage.message, type: "received", time: receivedMessage.time, filename: receivedMessage.fileName }]
-                                setMessageList(messages.current)
-                            }
-                        } catch (error) {
-                            console.error('Error parsing message:', error);
+            client.current = new Client({
+                webSocketFactory: () => new SockJS(`${import.meta.env.VITE_API_URL}/ws`),
+                debug: function (str) {
+                    console.log('STOMP: ' + str);
+                },
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+            });
+            client.current.onConnect = (frame) => {
+                setConnectionStatus('Connected');
+                // Subscribe to the messages topic
+                client.current.subscribe('/topic/messages', (message) => {
+                    try {
+                        const receivedMessage = JSON.parse(message.body);
+                        // setNewMessages((prevMessages) => [...prevMessages, receivedMessage]);
+                        console.log(receivedMessage, "receivedMessage")
+                        if (receivedMessage.receiverId == localStorage.getItem("userId")) {
+                            messages.current = [...messages.current, { message: receivedMessage.message, type: "received", time: receivedMessage.time, filename: receivedMessage.fileName }]
+                            setMessageList(messages.current)
                         }
-                    });
-                };
+                    } catch (error) {
+                        console.error('Error parsing message:', error);
+                    }
+                });
+            };
 
-                client.current.onStompError = (frame) => {
-                    setConnectionStatus('Error: ' + frame.headers['message']);
-                };
+            client.current.onStompError = (frame) => {
+                setConnectionStatus('Error: ' + frame.headers['message']);
+            };
 
-                client.current.onWebSocketError = (error) => {
-                    setConnectionStatus('WebSocket Error');
-                };
+            client.current.onWebSocketError = (error) => {
+                setConnectionStatus('WebSocket Error');
+            };
 
-                client.current.onDisconnect = () => {
-                    setConnectionStatus('Disconnected');
-                };
+            client.current.onDisconnect = () => {
+                setConnectionStatus('Disconnected');
+            };
 
-                // Activate the client
-                client.current.activate();
-            }
-
+            // Activate the client
+            client.current.activate();
         } catch (error) {
             console.error('Error setting up WebSocket:', error);
             setConnectionStatus('Setup Error');
